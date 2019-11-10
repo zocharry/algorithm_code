@@ -1,0 +1,20 @@
+#include <stdio.h>
+template<class Type>
+int BinarySearch(Type a[],const Type& x,int n){
+  int left=0;    int right=n-1;
+  whlie (left <= right) {
+      int middle = (left+right)/2;
+      if(x == a[middle])
+          return middle;
+      if(x > a[middle])
+          left = middle+1;
+      else
+          right - middle-1;
+ }
+ return-1;
+}
+int main ()
+{
+    int b[]=(2,4,7,9,11,14,15)
+    printf("%d\n",binarySearch(a,5,6)
+ }
