@@ -1,38 +1,77 @@
-#include <iostream>
-using namespace std;
-void MutrixChain(int p[7],int n,int m[7][7],int s[7][7]){
-	for(int i=0;i<=n;i++){
-		m[i][i]=0;
+#include<stdio.h>
+#define maxint 1000
+void Dijkstra(int n,int v,int dist[],int prev[],int c[5][5]){                                                                                                                                                                                                                       
+	bool s[maxint];
+	for(int i=1;i<=n;i++){
+		dist[i]=c[i][i];
+		s[i]=false;
+		if(dist[i]==maxint)
+			prev[i]=0;
+		else
+			prev[i]=v;
 	}
-	for(int r=2;r<=n;r++){
-		for(int i=1;i<=n-r+1;i++){
-			int j=i+r-1;
-			m[i][j]=m[i+1][j]+p[i-1]*p[i]*p[j];
-			s[i][j]=i;
-			for(int k=i+1;k<j;k++){
-				int t=m[i][k]+m[k+1][j]+p[i+1]*p[k]*p[j];
-				if(t<m[i][j]){
-					m[i][j]=t;
-					s[i][j]=k;
-				}			
+	dist[v]=0;s[v]=true;
+	for(int i=1;i<n;i++){
+		int temp=maxint;
+		int u=v;
+		for(int j=1;j<=n;j++){
+			if((!s[j])&&(dist[j]<temp)){
+				u=j;
+				temp=dist[j];
+			}
+			s[u]=true;
+			for(int j=1;j<=n;j++){
+				if((!s[j])&&(c[u][j]<maxint)){
+					int newdist=dist[u]+c[u][j];
+					if(newdist<dist[j]){
+						dist[j]=newdist;
+						prev[j]=u;
+					}
+				}
 			}
 		}
 	}
 }
-void Traceback(int i,int j,int s[7][7]){
-	if(i==j){
-		return;}
-	Traceback(i,s[i][j],s);
-	Traceback(s[i][j]+1,j,s);
-	cout<<"Multiply A"<<i<<","<<s[i][j];
-	cout<<"and A"<<(s[i][j]+1)<<","<<j<<endl;
+void PrintPrev(int prev[],int n,int vn){
+	int tmp=vn;
+	int i,j;
+	int tmpprv[n];
+	for(i=0;i<n;i++)
+		tmpprv[i]=0;
+	tmpprv[0]=vn+1;
+	for(i=0,j=1;j<n;j++){
+		if(prev[tmp]!=-1&&tmp!=0){
+			tmpprv[i]=prev[tmp]+1;
+			tmp=prev[tmp];
+			i++;
+		}
+		else break;
+	}
+	for(i=n-1;i>=0;i--){
+		if(tmpprv[i]!=0){
+			printf("v%d",tmpprv[i]);
+			if(i)
+				printf("-->");
+		}
+	}
+	printf("-->V%d",vn+1);
 }
 int main(){
-	
-	int p[7]={30,35,15,5,10,20,25};
-	int s[7][7];
-	int m[7][7];
-	int n=6;
-	MutrixChain(p,n,m,s);
-	Traceback(1,n,s);
+	int n=5;
+	int v[n]={1,2,3,4,5};
+	int c[n][n]={{0,10,maxint,30,100},
+			{maxint,0,50,maxint,maxint},
+			{maxint,maxint,0,maxint,10},
+			{maxint,maxint,20,0,60},
+			{maxint,maxint,maxint,maxint,0}
+			};
+	int *prev;//存放求得的最短路径 
+	int *dist;//存放源到所有其他顶点之间的最短路径长度 
+	Dijkstra(n,0,dist,prev,c);//求顶点V1到其余个点的最短路径 
+	for(int i=0;i<5;i++){
+	  	printf("%d-->%d:%d\t",v[0],v[i],dist[i]);
+		PrintPrev(prev,0,i);
+		printf("\n");
+	}
+	return 0;
 }
